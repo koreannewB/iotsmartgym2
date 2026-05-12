@@ -11,7 +11,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
 import time
 import threading
-import sensor
+import uvicorn
+
 from fastapi.staticfiles import StaticFiles
     
 app = FastAPI()
@@ -34,8 +35,8 @@ async def tm_data():
 
 def main():
         
-    sensor.init_gpio()
-    sensor.start_threads()
+    #sensor.init_gpio()
+    #sensor.start_threads()
 
     # 각 기능 3개가 동시에 작동하도록 스레드생성
     threadtreadmill = threading.Thread(target=treadmill.trail_detect_run)
@@ -50,6 +51,10 @@ def main():
     # threadtowel.start()
     # threadfitness.start()
 
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 if __name__ == "__main__":
     main()
+
+
+    

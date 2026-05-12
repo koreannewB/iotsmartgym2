@@ -15,7 +15,7 @@ def trail_detect_run():
     #조건 넣는 구간!!!!
     print(state.TREADMILL[1])
     #지정 
-    condition = {1: True, 2: False, 3: True, 4: True}
+    condition = {1: False, 2: True, 3: True, 4: True}
     
 
 
@@ -33,6 +33,11 @@ def trail_detect_run():
             
         time.sleep(1)
         print("변경")
+        
+        if condition[1] == False:
+            condition[1] = True
+        else:
+            condition[1] = False
 
 
 
