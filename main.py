@@ -1,4 +1,4 @@
-# 실행: uvicorn main:app --host 0.0.0.0 --port 8000
+# 실행: python main.py
 # 가상환경: source venv/bin/activate
 
 import threading
@@ -6,7 +6,7 @@ import state
 import treadmill
 import towel_remaining
 import fitness_equipment
-
+import uvicorn 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles

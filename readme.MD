@@ -32,6 +32,8 @@ pip install fastapi uvicorn
 실행 명령어 
 웹사이트 활성화:uvicorn main:app --reload
 
+실행명령어(메인):python main.py
+코드로 unicorn명령어가 포함되어있습니다.
 
 SMART_GYM
 
@@ -94,7 +96,7 @@ pip install fastapi uvicorn
 ## 🔹 Run the Server
 
 ```bash
-uvicorn main:app --reload
+python main.py
 ```
 
 👉 This will start the FastAPI server.
