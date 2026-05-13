@@ -38,7 +38,14 @@ async def towel_data():
 @app.get("/equipmentdata")
 async def equipment_data():
     return state.EQUIPMENT
+@app.get("/monitor")
+async def monitor():
+    return FileResponse('templates/monitor.html')
 
+@app.get("/video")
+async def video():
+    print(f"current_frame: {treadmill.current_frame is None}")  # 확인용
+    return {"frame": treadmill.current_frame}
 
 def main():
     try:

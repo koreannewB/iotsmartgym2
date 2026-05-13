@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YOLO 모니터</title>
+</head>
+<body style="background:#000; display:flex; justify-content:center;">
+    <img id="yolo-view" style="height:100vh;">
+    <script>
+    setInterval(async () => {
+        const res = await fetch('/video')
+        const data = await res.json()
+        if(data.frame)
+            document.getElementById('yolo-view').src = 'data:image/jpeg;base64,' + data.frame
+    }, 100)
+    </script>
+</body>
+</html>
