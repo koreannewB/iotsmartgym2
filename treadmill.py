@@ -25,6 +25,8 @@ def trail_detect_run():
     print("런닝머신감지기능작동")
     cap = cv2.VideoCapture("ex1.mp4")
 
+    prev_detected = {1: False, 2: False}
+
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -37,7 +39,7 @@ def trail_detect_run():
 
         _, buffer = cv2.imencode('.jpg', annotated)
         current_frame = base64.b64encode(buffer).decode('utf-8')
-        print(f"프레임 저장됨: {len(current_frame)}")
+        # print(f"프레임 저장됨: {len(current_frame)}")
         # YOLO 감지
        
 
@@ -58,9 +60,19 @@ def trail_detect_run():
 
         # state 업데이트
         for i in range(1, 3):
+
+            if detected[i] != prev_detected[i]:  # 상태 변했을 때만
+                if detected[i]:
+                    print(f"{i}번 런닝머신 사람 등장!")
+                else:
+                    print(f"{i}번 런닝머신 사람 퇴장!")
+                    
             if detected[i]:
                 state.TREADMILL[i] = "/static/img/onhuman.png"
             else:
                 state.TREADMILL[i] = "/static/img/offhuman.png"
 
-        print("변경")
+
+
+
+        # print("변경")
