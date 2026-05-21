@@ -1,75 +1,69 @@
 import smbus2
 import time
 import math
+import state # 웹서버와 데이터 공유
 
-# MPU-6050 레지스터 주소
 PWR_MGMT_1   = 0x6B
 ACCEL_XOUT_H = 0x3B
 
-# 사진에 명시된 I2C 주소 (AD0 핀 상태에 따라 다름)
 MPU_ADDRS = {
-    "sensor_1": 0x68,  # AD0 -> GND
-    "sensor_2": 0x69   # AD0 -> 3.3V
+    0: 0x68,  # state.EQUIPMENT의 0번째 인덱스 (벤치프레스)
+    1: 0x69   # state.EQUIPMENT의 1번째 인덱스 (덤벨 랙)
 }
 
-bus = smbus2.SMBus(1)  # I2C 버스 1 사용
+bus = None
 
 def init_mpu6050(addr):
     try:
-        # 슬립 모드 해제 (0을 기록하여 센서 깨우기)
         bus.write_byte_data(addr, PWR_MGMT_1, 0)
         return True
-    except Exception as e:
-        print(f"I2C 주소 {hex(addr)} 초기화 실패: {e}")
+    except Exception:
         return False
 
 def read_raw_data(addr, reg):
-    # 상위 8비트, 하위 8비트를 읽어서 합침
     high = bus.read_byte_data(addr, reg)
     low = bus.read_byte_data(addr, reg+1)
     value = ((high << 8) | low)
-    # 부호 있는 16비트 정수로 변환
-    if value > 32768:
-        value = value - 65536
-    return value
+    return value - 65536 if value > 32768 else value
 
 def get_accel_data(addr):
     try:
         acc_x = read_raw_data(addr, ACCEL_XOUT_H)
         acc_y = read_raw_data(addr, ACCEL_XOUT_H + 2)
         acc_z = read_raw_data(addr, ACCEL_XOUT_H + 4)
-        
-        # MPU-6050 기본 세팅(±2g)에서 1g = 16384 LSB
-        Ax = acc_x / 16384.0
-        Ay = acc_y / 16384.0
-        Az = acc_z / 16384.0
-        
-        return Ax, Ay, Az
-    except Exception as e:
+        return acc_x / 16384.0, acc_y / 16384.0, acc_z / 16384.0
+    except Exception:
         return None, None, None
 
 def calculate_magnitude(ax, ay, az):
     return math.sqrt(ax**2 + ay**2 + az**2)
 
-if __name__ == '__main__':
-    # 센서 초기화
-    for name, addr in MPU_ADDRS.items():
-        if init_mpu6050(addr):
-            print(f"{name} ({hex(addr)}) 초기화 성공")
-    
-    time.sleep(1)
-    
+# main.py의 스레드에서 실행될 run 함수
+def run():
+    global bus
     try:
-        while True:
-            for name, addr in MPU_ADDRS.items():
-                ax, ay, az = get_accel_data(addr)
-                if ax is not None:
-                    mag = calculate_magnitude(ax, ay, az)
-                    print(f"[{name}] Ax: {ax:.2f}g, Ay: {ay:.2f}g, Az: {az:.2f}g | 크기(Mag): {mag:.2f}g")
-                else:
-                    print(f"[{name}] 데이터 읽기 실패")
-            print("-" * 40)
-            time.sleep(0.5)
-            
-    except KeyboardInterrupt:
-        print("측정 종료")
+        bus = smbus2.SMBus(1)
+    except Exception as e:
+        print(f"[Equipment] I2C 버스 초기화 실패: {e}")
+        return
+
+    for idx, addr in MPU_ADDRS.items():
+        init_mpu6050(addr)
+    print("[Equipment] 가속도 센서 감지 스레드 시작")
+
+    while True:
+        for idx, addr in MPU_ADDRS.items():
+            ax, ay, az = get_accel_data(addr)
+            if ax is not None:
+                mag = calculate_magnitude(ax, ay, az)
+
+                # [로직] 중력가속도(1.0g)를 기준으로 1.2g 이상 흔들림이 발생하면 사용 중으로 간주
+                # 민감도를 바꾸고 싶다면 1.2 숫자를 조절하세요.
+                is_in_use = mag > 1.2
+
+                # state.py 업데이트 (웹서버로 전송됨)
+                if idx < len(state.EQUIPMENT):
+                    state.EQUIPMENT[idx]["status"] = "in_use" if is_in_use else "available"
+                    state.EQUIPMENT[idx]["in_use"] = 1 if is_in_use else 0
+
+        time.sleep(0.5)  # 0.5초마다 측정

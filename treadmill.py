@@ -60,17 +60,18 @@ def trail_detect_run():
 
         # state 업데이트
         for i in range(1, 3):
-
             if detected[i] != prev_detected[i]:  # 상태 변했을 때만
                 if detected[i]:
                     print(f"{i}번 런닝머신 사람 등장!")
                 else:
                     print(f"{i}번 런닝머신 사람 퇴장!")
-                    
+
             if detected[i]:
                 state.TREADMILL[i] = "/static/img/onhuman.png"
             else:
                 state.TREADMILL[i] = "/static/img/offhuman.png"
+
+        prev_detected = detected.copy()
 
 
 

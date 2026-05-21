@@ -1,8 +1,8 @@
 TREADMILL = {
-    1: "/static/img/human.png",
-    2: "/static/img/human.png",
-    3: "/static/img/human.png",
-    4: "/static/img/human.png",
+    1: "/static/img/offhuman.png",
+    2: "/static/img/offhuman.png",
+    3: "/static/img/offhuman.png",
+    4: "/static/img/offhuman.png",
 }
 
 TOWEL = {
