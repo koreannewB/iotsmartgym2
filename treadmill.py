@@ -23,15 +23,25 @@ def is_person_in_zone(box, zone):
 def trail_detect_run():
     global current_frame
     print("런닝머신감지기능작동")
-    cap = cv2.VideoCapture("ex1.mp4")
-
+    # cap = cv2.VideoCapture("ex1.mp4")
+    USE_CAMERA = True 
+    if USE_CAMERA:
+        from picamera2 import Picamera2
+        picam2 = Picamera2()
+        picam2.start()
+    else:
+        cap = cv2.VideoCapture("iottest2.mp4")
     prev_detected = {1: False, 2: False}
 
     while True:
-        ret, frame = cap.read()
-        if not ret:
-            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            continue
+        if USE_CAMERA:
+            frame = picam2.capture_array()
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        else:
+            ret, frame = cap.read()
+            if not ret:
+                cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                continue
         results = model(frame, verbose=False)
         annotated = results[0].plot()
         cv2.line(annotated, (600, 0), (600, 1920), (0, 255, 0), 3)
