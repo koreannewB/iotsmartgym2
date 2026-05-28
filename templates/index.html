@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Gym IoT Dashboard</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ── Header ── -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">Smart Gym</span>
+        </div>
+        <span class="subtitle">IoT 실시간 모니터링</span>
+      </div>
+      <div class="header-right">
+        <div class="connection-badge loading" id="connBadge">
+          <span class="conn-dot"></span>
+          <span class="conn-label" id="connLabel">연결 중...</span>
+        </div>
+        <span class="clock" id="clock"></span>
+      </div>
+    </header>
+
+    <!-- ── Stats Bar ── -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <span class="stat-value">4</span>
+        <span class="stat-label">전체 트레드밀</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value orange" id="statInUse">–</span>
+        <span class="stat-label">사용 중</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value green" id="statAvailable">–</span>
+        <span class="stat-label">사용 가능</span>
+      </div>
+    </div>
+
+    <!-- ── Treadmill Section ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="section-title-icon">🏃</span>
+          트레드밀
+        </h2>
+        <span class="section-badge" id="tmBadge">로딩 중...</span>
+      </div>
+      <div class="treadmill-grid" id="tmGrid">
+        <!-- 동적 생성 (app.js) -->
+      </div>
+    </section>
+
+    <!-- ── Towel + Equipment Row ── -->
+    <div class="lower-row">
+
+      <!-- Towel Section -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-title-icon">🧺</span>
+            타올 비치대
+          </h2>
+        </div>
+        <div class="towel-list" id="towelList">
+          <!-- 동적 생성 (app.js) -->
+        </div>
+      </section>
+
+      <!-- Equipment Section -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-title-icon">🏋️</span>
+            헬스 기구
+          </h2>
+        </div>
+        <div class="equip-grid" id="equipGrid">
+          <!-- 동적 생성 (app.js) -->
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      Smart Gym IoT Service &nbsp;·&nbsp; 1초 간격 실시간 업데이트
+    </footer>
+
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
