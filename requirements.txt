@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+ultralytics
+opencv-python-headless
+picamera2
+RPi.GPIO
+smbus2
+albumentations
+ngrok
+moviepy
